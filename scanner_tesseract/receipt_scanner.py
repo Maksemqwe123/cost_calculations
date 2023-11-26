@@ -103,7 +103,7 @@ class OCR:
                             self.max_number = float(element)
                 except ValueError:
                     continue
-            else:
+            if self.max_number == float('-inf'):
                 return 'На чеке, не найдено цены'
 
     def _find_name_firm(self):
