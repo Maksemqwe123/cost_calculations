@@ -49,14 +49,19 @@ class OCR:
                 csv_reader = csv.reader(csv_file)
                 self.name_street_firm = [row for row in csv_reader][1:]
 
+            print(self.all_info)
+
             try:  # Пытаемся найти название фирмы (Все фирмы выделены кавычками по бокам)
                 search_company_name = self.all_info.split("”")[1].split("”")[0]
             except IndexError:
-                search_company_name = self.all_info.split("'")[1].split('”')
-                if len(search_company_name) < 1:
-                    search_company_name = search_company_name[0].split("'")
-                else:
-                    search_company_name = search_company_name[0]
+                try:
+                    search_company_name = self.all_info.split("'")[1].split('”')
+                    if len(search_company_name) < 1:
+                        search_company_name = search_company_name[0].split("'")
+                    else:
+                        search_company_name = search_company_name[0]
+                except IndexError:
+                    search_company_name = self.all_info
 
             for name_firm, street, category in self.name_street_firm:
                 if search_company_name:
@@ -98,6 +103,8 @@ class OCR:
                             self.max_number = float(element)
                 except ValueError:
                     continue
+            else:
+                return 'На чеке, не найдено цены'
 
     def _find_name_firm(self):
         if self.result['IsErroredOnProcessing']:
@@ -118,12 +125,12 @@ class OCR:
 
     def __call__(self):
         if not self.company_name_categories:
-            result_find_name_firm = self._find_name_firm()
+            self._find_name_firm()
 
             if not self.company_name_categories and self.price_search_result is None:
-                return result_find_name_firm, self.max_number
+                return 'Не найдено название компании', self.max_number
             elif not self.company_name_categories and self.price_search_result is not None:
-                return result_find_name_firm, self.price_search_result
+                return ['Не удалось распознать текст на чеке']
 
         if self.company_name_categories and self.price_search_result is not None:
             return self.company_name_categories[0], self.company_name_categories[1], self.price_search_result

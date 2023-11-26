@@ -3,13 +3,14 @@ from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 
 from cryptography.fernet import Fernet
-import langid
 import datetime
 import time
 
 from cost_calculations.db_postgres.postgres import Postgres
 from cost_calculations.config.config_reader import load_config
 from buttons import *
+
+from directory_english_characters import verification_symbol
 
 path_config_ini = r'C:\Service_finance\cost_calculations\config\config.ini'
 
@@ -39,6 +40,19 @@ async def start(message: types.Message):
         await Registration.login.set()
 
 
+async def check_password_symbol(message):
+    for symbol_password_users in message.text:
+        for symbol in verification_symbol:
+            if symbol == symbol_password_users:
+                break
+        else:
+            continue
+        break
+
+    else:
+        return False
+
+
 async def login(message: types.Message, state: FSMContext):
     cipher_suite = Fernet(fernet_key)
     # Преобразование строки в байтовый формат
@@ -62,9 +76,8 @@ async def login(message: types.Message, state: FSMContext):
             await Registration.login.set()
 
         else:
-            detect_text_lang = langid.classify(message.text)
-
-            if detect_text_lang[0] == 'en':
+            check_password = await check_password_symbol(message)
+            if check_password is None:
                 user_login_password = await state.get_data()
                 if 'user_password' in user_login_password.keys():
                     await message.answer(

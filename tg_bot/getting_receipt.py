@@ -2,6 +2,8 @@ from aiogram import types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 
+import time
+
 from cost_calculations.scanner_tesseract.receipt_scanner import *
 from buttons import *
 
@@ -32,11 +34,22 @@ async def getting_image(message: types.Message, state: FSMContext):
     response = requests.post('https://api.ocr.space/parse/image', files={'image': image_data}, data=payload)
 
     result_parsed = OCR(response)
-    company_name, category_name, price = result_parsed()
 
-    await message.answer(f"Название компании: {company_name}\nКатегория: {category_name}\nЦена покупок: {price}\nВсё верно?", reply_markup=check_user)
+    if len(result_parsed()) == 1:
+        await message.answer(result_parsed()[0])
+        time.sleep(2)
+        await message.answer('Попробуйте ввести название компании вручную или от сканируйте ещё раз',
+                             reply_markup=user_keyboard)
+        await state.finish()
+    elif len(result_parsed()) == 2:
+        await message.answer(f'{result_parsed()[0]}\nЦена покупки: {result_parsed()[1]}')
 
-    await ScannerImage.output_user.set()
+    else:
+        company_name, category_name, price = result_parsed()
+
+        await message.answer(f"Название компании: {company_name}\nКатегория: {category_name}\nЦена покупок: {price}\nВсё верно?", reply_markup=check_user)
+
+        await ScannerImage.output_user.set()
 
 
 async def output_user_data(message: types.Message, state: FSMContext):
