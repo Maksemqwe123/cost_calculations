@@ -7,30 +7,29 @@ import re
 
 
 # Загрузка изображения
-image_path = r'C:\Service_finance\img_receipts\1.jpg'
-image = cv2.imread(image_path)
+def download_image(path):
+    image = cv2.imread(path)
 
-gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-cv2.imwrite(r'C:\Service_finance\img_receipts\my_image.jpg', gray_image)
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    cv2.imwrite(path, gray_image)
 
-image_data = open(r'C:\Service_finance\img_receipts\my_image.jpg', 'rb').read()
+    image_data = open(path, 'rb').read()
 
-# Отправка POST-запроса на OCR.space API
-api_key = 'K85148581388957'
-payload = {
-    'apikey': api_key,
-    'language': 'rus',
-    'isOverlayRequired': False,  # Не требуется наложение текста на изображение
-    'detectOrientation': True,  # Автоматическое определение ориентации текста
-    'scale': True,  # Масштабирование изображения
-    'filetype': 'jpg',  # Формат изображения
-}
-
-response = requests.post('https://api.ocr.space/parse/image', files={'image': image_data}, data=payload)
+    # Отправка POST-запроса на OCR.space API
+    api_key = 'K85148581388957'
+    payload = {
+        'apikey': api_key,
+        'language': 'rus',
+        'isOverlayRequired': False,  # Не требуется наложение текста на изображение
+        'detectOrientation': True,  # Автоматическое определение ориентации текста
+        'scale': True,  # Масштабирование изображения
+        'filetype': 'jpg',  # Формат изображения
+    }
+    return image_data, payload
 
 
 class OCR:
-    def __init__(self):
+    def __init__(self, response):
         self.keyword_search = ['оплата', 'оплачено', 'оплачена', 'оплачено(плат.карта)', 'оплате', 'итого']
         self.max_similarity = float('-inf')
         self.max_number = float('-inf')  # Initializing the variable with the smallest possible value
@@ -46,14 +45,18 @@ class OCR:
         else:
             self.all_info = self.result['ParsedResults'][0]['ParsedText']
 
-            with open(r'C:\Service_finance\parser_spider\firmsdata\firmsdata\spiders\firms.csv', encoding='utf-8') as csv_file:
+            with open(r'C:\Service_finance\cost_calculations\parser_spider\firmsdata\firmsdata\spiders\firms.csv', encoding='utf-8') as csv_file:
                 csv_reader = csv.reader(csv_file)
                 self.name_street_firm = [row for row in csv_reader][1:]
 
             try:  # Пытаемся найти название фирмы (Все фирмы выделены кавычками по бокам)
-                search_company_name = self.all_info.split('”')[1].split('”')[0]
+                search_company_name = self.all_info.split("”")[1].split("”")[0]
             except IndexError:
-                search_company_name = self.all_info.split("'")[1].split("'")[0]
+                search_company_name = self.all_info.split("'")[1].split('”')
+                if len(search_company_name) < 1:
+                    search_company_name = search_company_name[0].split("'")
+                else:
+                    search_company_name = search_company_name[0]
 
             for name_firm, street, category in self.name_street_firm:
                 if search_company_name:
@@ -62,7 +65,7 @@ class OCR:
                         if float(similarity) > self.max_similarity:
                             self.company_name_categories.clear()
                             self.max_similarity = float(similarity)
-                            self.company_name_categories.append([name_firm, category])
+                            self.company_name_categories.extend([name_firm, category])
 
                 else:
                     similarity = difflib.SequenceMatcher(None, self.all_info, name_firm).ratio() * 100
@@ -71,7 +74,7 @@ class OCR:
                         if float(similarity) > self.max_similarity:
                             self.company_name_categories.clear()
                             self.max_similarity = float(similarity)
-                            self.company_name_categories.append([name_firm, category])
+                            self.company_name_categories.extend([name_firm, category])
 
             self.price_search_result = self._search_price()
 
@@ -127,8 +130,3 @@ class OCR:
 
         if self.company_name_categories and self.price_search_result is None:
             return self.company_name_categories[0], self.company_name_categories[1], self.max_number
-
-
-result_parsed = OCR()
-company_name, category_name, price = result_parsed()
-print(company_name, category_name, price)

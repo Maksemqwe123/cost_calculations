@@ -14,3 +14,11 @@ user_keyboard = ReplyKeyboardMarkup(resize_keyboard=True).add(
     KeyboardButton('Отсканировать чек'),
     KeyboardButton('Внести вручную')
 )
+
+check_user = ReplyKeyboardMarkup(resize_keyboard=True).add(
+    KeyboardButton('Да')
+).add(
+    KeyboardButton('Неправильная цена')
+).add(
+    KeyboardButton('Неправильное название компании')
+)
