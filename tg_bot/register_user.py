@@ -25,7 +25,8 @@ class Registration(StatesGroup):
     save_status = State()
 
 
-async def start(message: types.Message):
+async def start(message: types.Message, state: FSMContext):
+    await state.finish()
     user_id = message.from_user.id
     if db.select_table_registrations_user(user_id):
         await message.answer('И снова привет, что вы хотите сделать?', reply_markup=user_keyboard)
@@ -38,6 +39,12 @@ async def start(message: types.Message):
         await message.answer('Введите логин')
 
         await Registration.login.set()
+
+
+async def cancel(message: types.Message, state: FSMContext):
+    await state.finish()
+
+    await message.answer('Действие отменено', reply_markup=user_keyboard)
 
 
 async def check_password_symbol(message):

@@ -7,6 +7,7 @@ from aiogram.dispatcher.filters import Text
 
 def register_handlers_commands(dp: Dispatcher):
     dp.register_message_handler(start, commands='start', state='*')
+    dp.register_message_handler(cancel, commands='cancel', state='*')
 
 
 def register_handlers_user_register(dp: Dispatcher):
