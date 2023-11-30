@@ -2,6 +2,8 @@ from aiogram import types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 
+import requests
+
 import datetime
 import time
 

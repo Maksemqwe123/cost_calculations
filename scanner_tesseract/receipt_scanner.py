@@ -1,9 +1,13 @@
 import difflib
 
-import requests
 import csv
 import cv2
 import re
+import os
+
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 # Загрузка изображения
@@ -16,9 +20,8 @@ def download_image(path):
     image_data = open(path, 'rb').read()
 
     # Отправка POST-запроса на OCR.space API
-    api_key = 'K85148581388957'
     payload = {
-        'apikey': api_key,
+        'apikey': os.getenv('API_KEY'),
         'language': 'rus',
         'isOverlayRequired': False,  # Не требуется наложение текста на изображение
         'detectOrientation': True,  # Автоматическое определение ориентации текста

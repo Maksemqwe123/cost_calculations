@@ -7,18 +7,18 @@ import datetime
 import time
 
 from cost_calculations.db_postgres.postgres import Postgres
-from cost_calculations.config.config_reader import load_config
 from buttons import *
 
 from directory_english_characters import verification_symbol
 
-path_config_ini = r'C:\Service_finance\cost_calculations\config\config.ini'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 db = Postgres()
 
-fernet_key = load_config(path_config_ini).text_encryption.fernet_key
-
-cipher_suite = Fernet(fernet_key)
+cipher_suite = Fernet(os.getenv('FERNET_KEY'))
 
 
 class Registration(StatesGroup):
@@ -136,8 +136,6 @@ async def password(message: types.Message, state: FSMContext):
 async def save_login_password(message: types.Message, state: FSMContext):
     if message.text == 'Да':
         user_login_password = await state.get_data()
-
-        cipher_suite = Fernet(fernet_key)
 
         user_login_bytes = str(user_login_password['user_login']).encode()
         cipher_login = cipher_suite.encrypt(user_login_bytes)

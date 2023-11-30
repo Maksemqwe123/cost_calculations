@@ -4,13 +4,15 @@ from aiogram.utils import executor
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
 from register_handlers_main import *
-from cost_calculations.config.config_reader import load_config
 
-path_config_ini = r'C:\Service_finance\cost_calculations\config\config.ini'
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 storage = MemoryStorage()
 
-bot = Bot(load_config(path_config_ini).tg_bot.token)
+bot = Bot(os.getenv('TOKEN'))
 dp = Dispatcher(bot, storage=storage)
 
 

@@ -1,12 +1,14 @@
-from cost_calculations.config.config_reader import load_config
 import psycopg2
+import os
+from dotenv import load_dotenv
+
+load_dotenv()
 
 
 class Postgres:
     def __init__(self):
-        self.db_config = load_config(r'C:\Service_finance\cost_calculations\config\config.ini')
-        self.connection = psycopg2.connect(host=self.db_config.db_conn.host, user=self.db_config.db_conn.user,
-                                           password=self.db_config.db_conn.password, database=self.db_config.db_conn.db_name)
+        self.connection = psycopg2.connect(host=os.getenv('HOST'), user=os.getenv('USER'),
+                                           password=os.getenv('PASSWORD'), database=os.getenv('DB_NAME'))
         self.cursor = self.connection.cursor()
 
         self._create_table_registrations_user()
@@ -26,7 +28,7 @@ class Postgres:
 
     def _create_main_table(self):
         sql_create = """CREATE TABLE IF NOT EXISTS users_expenses (
-        user_id BIGINT UNIQUE,
+        user_id BIGINT,
         user_name VARCHAR(128),
         company_name VARCHAR(256),
         category_name VARCHAR(512),
