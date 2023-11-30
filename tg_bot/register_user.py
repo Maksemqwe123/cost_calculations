@@ -18,6 +18,8 @@ db = Postgres()
 
 fernet_key = load_config(path_config_ini).text_encryption.fernet_key
 
+cipher_suite = Fernet(fernet_key)
+
 
 class Registration(StatesGroup):
     login = State()
@@ -61,7 +63,6 @@ async def check_password_symbol(message):
 
 
 async def login(message: types.Message, state: FSMContext):
-    cipher_suite = Fernet(fernet_key)
     # Преобразование строки в байтовый формат
     plaintext_bytes = message.text.encode()
     # Шифрование строки
@@ -169,3 +170,16 @@ async def save_login_password(message: types.Message, state: FSMContext):
     else:
         await message.answer('Я не понимаю вас, воспользуетесь пожалуйста клавиатурой')
         await Registration.save_status.set()
+
+
+async def viewing_login_password(message: types.Message):
+    user_id = message.from_user.id
+    info_user = db.select_table_registrations_user(user_id)
+    login_user = info_user[0][0]
+    password_user = info_user[0][1]
+
+    decrypted_login = cipher_suite.decrypt(login_user)
+    decrypted_password = cipher_suite.decrypt(password_user)
+
+    await message.answer(f'Логин: {decrypted_login.decode()}\nПароль: {decrypted_password.decode()}', reply_markup=user_keyboard)
+

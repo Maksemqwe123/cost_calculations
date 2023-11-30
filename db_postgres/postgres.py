@@ -31,7 +31,7 @@ class Postgres:
         company_name VARCHAR(256),
         category_name VARCHAR(512),
         price FLOAT8,
-        last_activity TIMESTAMP
+        dttm TIMESTAMP
         )"""
 
         with self.connection:
@@ -45,15 +45,15 @@ class Postgres:
             self.cursor.execute(sql_insert)
 
     def insert_main_table(self, user_id, user_name, company_name, category_name, price, last_activity):
-        sql_insert = 'INSERT INTO users_expenses (user_id, user_name, company_name, category_name, price, last_activity)'
-        sql_insert = sql_insert + 'VALUES (' + user_id + ',' + user_name + ',' + company_name + ',' + category_name
-        sql_insert = sql_insert + ',' + price + ",'" + last_activity + "');"
+        sql_insert = 'INSERT INTO users_expenses (user_id, user_name, company_name, category_name, price, dttm)'
+        sql_insert = sql_insert + "VALUES ('" + user_id + "', '" + user_name + "', '" + company_name + "', '" + category_name
+        sql_insert = sql_insert + "', '" + price + "', '" + last_activity + "');"
 
         with self.connection:
             self.cursor.execute(sql_insert)
 
     def select_table_registrations_user(self, user_id):
-        sql_select = f'SELECT user_id FROM user_registration WHERE user_id = {user_id}'
+        sql_select = f'SELECT login, password FROM user_registration WHERE user_id = {user_id}'
 
         with self.connection:
             self.cursor.execute(sql_select)

@@ -2,12 +2,16 @@ from aiogram import types
 from aiogram.dispatcher.filters.state import StatesGroup, State
 from aiogram.dispatcher import FSMContext
 
+import datetime
 import time
 
 from cost_calculations.scanner_tesseract.receipt_scanner import *
+from cost_calculations.db_postgres.postgres import Postgres
 from buttons import *
 
 wrong_company_name_price = []
+
+db = Postgres()
 
 
 class ScannerImage(StatesGroup):
@@ -72,17 +76,23 @@ async def getting_image(message: types.Message, state: FSMContext):
 
 async def output_user_data(message: types.Message, state: FSMContext):
     text_user = message.text
+    user_id = message.from_user.id
+    username = message.from_user.full_name
+
+    scan_info = await state.get_data()
 
     if text_user == 'Да':
+        dttm = datetime.datetime.now().strftime('%Y.%m.%d %H:%M:%S')
         await message.answer('Данные сохранены вы их можете просмотреть на сайте', reply_markup=user_keyboard)
+        db.insert_main_table(
+            str(user_id), username, scan_info['company_name'], scan_info['category_name'], str(scan_info['price']), dttm
+        )
 
         wrong_company_name_price.clear()
 
         await state.finish()
 
     elif text_user == 'Неправильная цена':
-        scan_info = await state.get_data()
-
         wrong_company_name_price.clear()
         wrong_company_name_price.append([scan_info['company_name'], scan_info['category_name'], scan_info['price']])
 
@@ -91,8 +101,6 @@ async def output_user_data(message: types.Message, state: FSMContext):
         await ManualUserInput.price.set()
 
     elif text_user == 'Неправильное название компании':
-        scan_info = await state.get_data()
-
         wrong_company_name_price.clear()
         wrong_company_name_price.append([scan_info['company_name'], scan_info['category_name'], scan_info['price']])
 

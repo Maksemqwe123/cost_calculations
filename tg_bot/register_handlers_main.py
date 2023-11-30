@@ -14,6 +14,7 @@ def register_handlers_user_register(dp: Dispatcher):
     dp.register_message_handler(login, state=Registration.login)
     dp.register_message_handler(password, state=Registration.password)
     dp.register_message_handler(save_login_password, state=Registration.save_status)
+    dp.register_message_handler(viewing_login_password, Text(equals='Посмотреть логин и пароль'))
 
 
 def register_handlers_getting_receipt(dp: Dispatcher):
