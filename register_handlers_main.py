@@ -1,5 +1,5 @@
-from register_user import *
-from getting_info_receipt import *
+from tg_bot.register_user import *
+from tg_bot.getting_info_receipt import *
 
 from aiogram import Dispatcher
 from aiogram.dispatcher.filters import Text

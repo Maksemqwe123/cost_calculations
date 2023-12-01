@@ -7,9 +7,9 @@ import requests
 import datetime
 import time
 
-from cost_calculations.scanner_tesseract.receipt_scanner import *
-from cost_calculations.db_postgres.postgres import Postgres
-from buttons import *
+from .scanner_tesseract.receipt_scanner import *
+from .db_postgres.postgres import Postgres
+from .buttons_bot.buttons import *
 
 wrong_company_name_price = []
 
@@ -36,7 +36,7 @@ async def getting_image(message: types.Message, state: FSMContext):
     receipt = message.photo[-1]
     user_id = message.from_user.id
 
-    path_save_image = fr'C:\Service_finance\cost_calculations\img_receipts\{user_id}.jpg'
+    path_save_image = fr'img_receipts\{user_id}.jpg'
 
     await receipt.download(destination_file=path_save_image)
 
@@ -125,7 +125,7 @@ async def manual_input(message: types.Message):
 
 async def get_company_name(message: types.Message, state: FSMContext):
     text_user = message.text
-    with open(r'C:\Service_finance\cost_calculations\parser_spider\firmsdata\firmsdata\spiders\firms.csv',
+    with open(r'parser_spider/firmsdata/firmsdata/spiders/firms.csv',
               encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file)
         name_street_firm = [row for row in csv_reader][1:]

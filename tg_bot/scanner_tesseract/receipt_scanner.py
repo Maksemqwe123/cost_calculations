@@ -48,7 +48,7 @@ class OCR:
         else:
             self.all_info = self.result['ParsedResults'][0]['ParsedText']
 
-            with open(r'C:\Service_finance\cost_calculations\parser_spider\firmsdata\firmsdata\spiders\firms.csv', encoding='utf-8') as csv_file:
+            with open(r'parser_spider/firmsdata/firmsdata/spiders/firms.csv', encoding='utf-8') as csv_file:
                 csv_reader = csv.reader(csv_file)
                 self.name_street_firm = [row for row in csv_reader][1:]
 

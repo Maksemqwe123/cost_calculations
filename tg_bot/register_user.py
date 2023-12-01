@@ -6,10 +6,10 @@ from cryptography.fernet import Fernet
 import datetime
 import time
 
-from cost_calculations.db_postgres.postgres import Postgres
-from buttons import *
+from .db_postgres.postgres import Postgres
+from .buttons_bot.buttons import *
 
-from directory_english_characters import verification_symbol
+from . import directory_english_characters
 
 from dotenv import load_dotenv
 import os
@@ -51,7 +51,7 @@ async def cancel(message: types.Message, state: FSMContext):
 
 async def check_password_symbol(message):
     for symbol_password_users in message.text:
-        for symbol in verification_symbol:
+        for symbol in directory_english_characters.verification_symbol:
             if symbol == symbol_password_users:
                 break
         else:
