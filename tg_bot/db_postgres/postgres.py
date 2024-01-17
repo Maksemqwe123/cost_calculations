@@ -28,6 +28,7 @@ class Postgres:
 
     def _create_main_table(self):
         sql_create = """CREATE TABLE IF NOT EXISTS users_expenses (
+        id SERIAL PRIMARY KEY,
         user_id BIGINT,
         user_name VARCHAR(128),
         company_name VARCHAR(256),

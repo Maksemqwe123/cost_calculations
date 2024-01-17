@@ -125,7 +125,7 @@ async def manual_input(message: types.Message):
 
 async def get_company_name(message: types.Message, state: FSMContext):
     text_user = message.text
-    with open(r'parser_spider/firmsdata/firmsdata/spiders/firms.csv',
+    with open(r'C:\Service_finance\cost_calculations\tg_bot\parser_spider\firmsdata\firmsdata\spiders\firms.csv',
               encoding='utf-8') as csv_file:
         csv_reader = csv.reader(csv_file)
         name_street_firm = [row for row in csv_reader][1:]

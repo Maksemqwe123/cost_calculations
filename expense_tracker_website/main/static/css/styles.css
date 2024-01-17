@@ -88,6 +88,9 @@ a {
   padding: 25px;
   border-radius: 12px;
   box-shadow: rgba(0, 0, 0, 0.1);
+  {% if condition %}
+    height: 420px;
+  {% endif %}
 }
 .form_close {
   position: absolute;
@@ -102,6 +105,16 @@ a {
   font-size: 22px;
    color: #0b0217;
    text-align: center;
+}
+#login_input_box {
+  position: relative;
+  margin-top: 70px;
+  height: 40px;
+}
+#password_input_box {
+  position: relative;
+  margin-top: 30px;
+  height: 40px;
 }
 .input_box {
   position: relative;
@@ -186,4 +199,34 @@ a {
   font-size: 12px;
   text-align: center;
   margin-top: 15px;
+}
+
+.error-message {
+  display: none;
+  position: absolute;
+  width: 85%;
+  top: 50%;
+  transform: translate(0%, -320%);
+  background-color: rgba(255, 0, 0, 0.5);
+  color: #fff;
+  padding: 10px;
+  border-radius: 5px;
+  animation-name: fade-in;
+  animation-duration: 1s;
+}
+
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+.error-message {
+  display: block;
 }

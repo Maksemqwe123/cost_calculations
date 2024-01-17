@@ -47,8 +47,16 @@ class OCR:
             return 'Ошибка при обработке изображения'
         else:
             self.all_info = self.result['ParsedResults'][0]['ParsedText']
+            current_folder = os.getcwd()
 
-            with open(r'parser_spider/firmsdata/firmsdata/spiders/firms.csv', encoding='utf-8') as csv_file:
+            # Путь к папке info
+            info_folder = os.path.join(current_folder, 'spider')
+
+            # Путь к файлу info.csv
+            info_file = os.path.join(info_folder, 'firms.csv')
+            print(info_file)
+
+            with open(r'C:\Service_finance\cost_calculations\tg_bot\parser_spider\firmsdata\firmsdata\spiders\firms.csv', encoding='utf-8') as csv_file:
                 csv_reader = csv.reader(csv_file)
                 self.name_street_firm = [row for row in csv_reader][1:]
 
