@@ -3,7 +3,7 @@ from aiogram.utils import executor
 
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 
-from register_handlers_main import *
+from .register_handlers_main import *
 
 from dotenv import load_dotenv
 import os

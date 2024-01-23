@@ -54,5 +54,5 @@ def sign_in_user(request):
 
 
 def view_all_records(request):  # Переписать функцию view_all_records
-    return HttpResponse("<h1>Expenditure results</h1>")
+    return render(request, 'index.html')
 

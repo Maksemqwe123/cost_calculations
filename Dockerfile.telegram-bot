@@ -9,4 +9,5 @@ COPY . /code/
 RUN pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir --upgrade pip
 
+EXPOSE 5000
 CMD ["python", "bot_main.py"]
